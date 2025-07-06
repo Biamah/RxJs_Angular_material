@@ -1,30 +1,25 @@
-import { Observable } from "rxjs";
-import { filter, map } from "rxjs/operators";
+import { fromEvent } from "rxjs";
+import { delay, filter, map } from "rxjs/operators";
 
-let numbers = [1, 2, 3, 5, 6];
+interface mouseTrack {
+  x: number;
+  y: number;
+}
 
-let sourceInstance = new Observable((subscriber) => {
-  let index = 0;
-  let produceValue = () => {
-    subscriber.next(numbers[index++]);
-    // chamada recursiva a ele mesmo
-    if (index < numbers.length) {
-      setTimeout(produceValue, 1000);
-    } else {
-      subscriber.complete();
-    }
-  };
-  produceValue();
-});
+let circle = document.getElementById("circle");
+let source = fromEvent(document, "mousemove").pipe(
+  map((e: MouseEvent) => {
+    return { x: e.clientX, y: e.clientY };
+  }),
+  filter((value: mouseTrack) => value.x < 500)
+);
 
-sourceInstance.pipe(map((n: number) => n * 2)).subscribe({
-  next: (x: number) => console.log(x),
+function onNext(value: mouseTrack) {
+  console.log(value);
+}
+
+source.subscribe({
+  next: (value) => onNext(value),
   error: (e: Error) => console.log(e),
-  complete: () => console.log("Completo"),
-});
-
-sourceInstance.pipe(filter((n: number) => n > 4)).subscribe({
-  next: (x: number) => console.log(x),
-  error: (e: Error) => console.log(e),
-  complete: () => console.log("Completo"),
+  complete: () => console.log(),
 });
