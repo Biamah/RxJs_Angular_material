@@ -15,9 +15,13 @@ function load(url: string): Observable<any> {
     let xhr = new XMLHttpRequest();
 
     xhr.addEventListener("load", () => {
-      let data = JSON.parse(xhr.responseText);
-      subscriber.next(data);
-      subscriber.complete();
+      if (xhr.status == 200) {
+        let data = JSON.parse(xhr.responseText);
+        subscriber.next(data);
+        subscriber.complete();
+      } else {
+        subscriber.error(xhr.statusText);
+      }
     });
 
     xhr.open("GET", url);
@@ -35,6 +39,6 @@ function renderMovie(movies: IMovie[]) {
 
 click.pipe(switchMap(() => load("../movies.json"))).subscribe({
   next: renderMovie,
-  error: (e) => console.log(e),
-  complete: () => console.log(),
+  error: (e) => console.log(`Error: ${e}`),
+  complete: () => console.log("Completo"),
 });
