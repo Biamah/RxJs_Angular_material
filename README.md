@@ -1,6 +1,9 @@
 ## Apenas um material de estudos
 
-Link da lib usada durante o estudo das bibliotecas: https://rxjs.dev/
+Link da lib usada durante o estudo das bibliotecas:
+
+- https://rxjs.dev/
+- https://developer.mozilla.org/en-US/docs/Web/HTTP/Reference/Status
 
 ## RxJS Operators
 
