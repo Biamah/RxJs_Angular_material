@@ -1,28 +1,44 @@
-import { fromEvent } from "rxjs";
-import { delay, filter, map } from "rxjs/operators";
+import { fromEvent, Observable } from "rxjs";
+import { switchMap } from "rxjs/operators";
 
-interface mouseTrack {
-  x: number;
-  y: number;
+interface IMovie {
+  title: string;
 }
 
-let circle = document.getElementById("circle");
-let source = fromEvent(document, "mousemove").pipe(
-  map((e: MouseEvent) => {
-    return { x: e.clientX, y: e.clientY };
-  }),
-  filter((value: mouseTrack) => value.x < 500),
-  delay(200)
-);
+let button = document.getElementById("button");
+let output = document.getElementById("output");
 
-function onNext(value: mouseTrack) {
-  console.log(value);
-  circle.style.left = `${value.x}px`;
-  circle.style.top = `${value.y}px`;
+let click = fromEvent(button, "click");
+
+function load(url: string): Observable<any> {
+  return new Observable((subscriber) => {
+    let xhr = new XMLHttpRequest();
+
+    xhr.addEventListener("load", () => {
+      if (xhr.status == 200) {
+        let data = JSON.parse(xhr.responseText);
+        subscriber.next(data);
+        subscriber.complete();
+      } else {
+        subscriber.error(xhr.statusText);
+      }
+    });
+
+    xhr.open("GET", url);
+    xhr.send();
+  });
 }
 
-source.subscribe({
-  next: (value) => onNext(value),
-  error: (e: Error) => console.log(e),
-  complete: () => console.log(),
+function renderMovie(movies: IMovie[]) {
+  movies.forEach((movie: IMovie) => {
+    let div = document.createElement("div");
+    div.innerText = movie.title;
+    output.appendChild(div);
+  });
+}
+
+click.pipe(switchMap(() => load("../movies.json"))).subscribe({
+  next: renderMovie,
+  error: (e) => console.log(`Error: ${e}`),
+  complete: () => console.log("Completo"),
 });
