@@ -3,10 +3,17 @@ import { RouterOutlet } from '@angular/router';
 import { MatSliderModule } from '@angular/material/slider';
 import { MatToolbarModule } from '@angular/material/toolbar';
 import { MatIconModule } from '@angular/material/icon';
+import { MatSidenavModule } from '@angular/material/sidenav';
 
 @Component({
   selector: 'app-root',
-  imports: [RouterOutlet, MatSliderModule, MatToolbarModule, MatIconModule],
+  imports: [
+    RouterOutlet,
+    MatSliderModule,
+    MatToolbarModule,
+    MatIconModule,
+    MatSidenavModule,
+  ],
   templateUrl: './app.html',
   styleUrl: './app.scss',
 })
