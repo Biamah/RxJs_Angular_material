@@ -8,6 +8,10 @@ interface IMovie {
 let button = document.getElementById("button");
 let output = document.getElementById("output");
 
+if (!button) {
+  throw new Error("Button element not found");
+}
+
 let click = fromEvent(button, "click");
 
 function load(url: string): Observable<any> {
@@ -33,7 +37,9 @@ function renderMovie(movies: IMovie[]) {
   movies.forEach((movie: IMovie) => {
     let div = document.createElement("div");
     div.innerText = movie.title;
-    output.appendChild(div);
+    if (output) {
+      output.appendChild(div);
+    }
   });
 }
 
