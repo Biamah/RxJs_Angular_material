@@ -1,9 +1,9 @@
-import { Component, ViewChild } from '@angular/core';
+import { Component, AfterViewInit, ChangeDetectorRef } from '@angular/core';
 import { RouterOutlet } from '@angular/router';
 import { MatSliderModule } from '@angular/material/slider';
 import { MatToolbarModule } from '@angular/material/toolbar';
 import { MatIconModule } from '@angular/material/icon';
-import { MatSidenav, MatSidenavModule } from '@angular/material/sidenav';
+import { MatSidenavModule } from '@angular/material/sidenav';
 import { BreakpointObserver } from '@angular/cdk/layout';
 
 @Component({
@@ -18,22 +18,22 @@ import { BreakpointObserver } from '@angular/cdk/layout';
   templateUrl: './app.html',
   styleUrl: './app.scss',
 })
-export class App {
-  @ViewChild(MatSidenav) sidenav!: MatSidenav;
+export class App implements AfterViewInit {
+  public isSmallScreen = false;
 
-  constructor(private breakpointObserver: BreakpointObserver) {}
+  constructor(
+    private breakpointObserver: BreakpointObserver,
+    private cdr: ChangeDetectorRef
+  ) {}
 
-  ngAfterContentInit(): void {
-    this.breakpointObserver.observe(['(max-width: 800px)']).subscribe({
-      next: (res) => {
-        if (res.matches) {
-          this.sidenav.mode = 'over';
-          this.sidenav.close();
-        } else {
-          this.sidenav.mode = 'side';
-          this.sidenav.open();
-        }
-      },
+  ngAfterViewInit(): void {
+    this.breakpointObserver.observe(['(max-width: 800px)']).subscribe((res) => {
+      this.isSmallScreen = res.matches;
+      this.cdr.detectChanges(); // força atualização da view
     });
+  }
+
+  get sidenavMode() {
+    return this.isSmallScreen ? 'over' : 'side';
   }
 }
